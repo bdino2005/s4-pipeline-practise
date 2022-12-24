@@ -94,6 +94,7 @@ options {
                 sh '''
                 ls 
                 pwd
+		uname -r
                 '''
             }
         }
