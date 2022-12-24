@@ -30,28 +30,28 @@ options {
                             ),
 
                           string(
-                            defaultValue: 'eric-001',
+                            defaultValue: 'blaise_01',
                             name: 'DB-Tag',
 			                description: 'Required to enter the image tag',
                             trim: true
                             ),
 
                           string(
-                            defaultValue: 'eric-001',
+                            defaultValue: 'blaise_01',
                             name: 'UI-Tag',
 			                description: 'Required to enter the image tag',
                             trim: true
                             ),
 
                           string(
-                            defaultValue: 'eric-001',
+                            defaultValue: 'blaise_01',
                             name: 'WEATHER-Tag',
 			                description: 'Required to enter the image tag',
                             trim: true
                             ),
 
                           string(
-                            defaultValue: 'eric-001',
+                            defaultValue: 'blaise_01',
                             name: 'AUTH-Tag',
 			                description: 'Required to enter the image tag',
                             trim: true
