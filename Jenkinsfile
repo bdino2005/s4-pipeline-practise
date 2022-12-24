@@ -4,7 +4,7 @@ pipeline {
             }
 
 options {
-    buildDiscarder(logRotator(numToKeepStr: '20'))
+    buildDiscarder(logRotator(numToKeepStr: '2'))
     disableConcurrentBuilds()
     timeout (time: 60, unit: 'MINUTES')
     timestamps()
@@ -18,41 +18,41 @@ options {
                         parameters([    
                         
                         choice(
-                            choices: ['Dev', 'Sanbox','Prod'], 
+                            choices: ['DEV', 'SANBOX','PROD'], 
                             name: 'Environment'   
                                 ),
 
                           string(
                             defaultValue: 's4user',
-                            name: 'User',
+                            name: 'USER',
 			                description: 'Required to enter your name',
                             trim: true
                             ),
 
                           string(
-                            defaultValue: 'blaise_01',
-                            name: 'DB-Tag',
+                            defaultValue: 'v1.0.0',
+                            name: 'DBTag',
 			                description: 'Required to enter the image tag',
                             trim: true
                             ),
 
                           string(
-                            defaultValue: 'blaise_01',
-                            name: 'UI-Tag',
+                            defaultValue: 'v1.0.0',
+                            name: 'UITag',
 			                description: 'Required to enter the image tag',
                             trim: true
                             ),
 
                           string(
-                            defaultValue: 'blaise_01',
-                            name: 'WEATHER-Tag',
+                            defaultValue: 'v1.0.0',
+                            name: 'WEATHERTag',
 			                description: 'Required to enter the image tag',
                             trim: true
                             ),
 
                           string(
-                            defaultValue: 'blaise_01',
-                            name: 'AUTH-Tag',
+                            defaultValue: 'v1.0.0',
+                            name: 'AUTHTag',
 			                description: 'Required to enter the image tag',
                             trim: true
                             ),
@@ -62,51 +62,50 @@ options {
             }
         }
  
-        stage('permission') {
+stage('permission') {
             steps {
                 sh '''
-       cat permission.txt | grep -o $USER
-       echo $? 
-        
+cat permission.txt | grep -o $USER
+echo $?
+
                 '''
             }
         }
-
+	    
         stage('cleaning') {
             steps {
                 sh '''
                 ls 
-                pwd
                 '''
             }
         }
 
-        stage('sonarqube') {
-           docker {
+    stage('SonarQube analysis') {
+            agent {
+                docker {
                   image 'sonarsource/sonar-scanner-cli:4.7.0'
-          }
-        }
-	   environment {
+                }
+               }
+               environment {
         CI = 'true'
         //  scannerHome = tool 'Sonar'
         scannerHome='/opt/sonar-scanner'
-        }
-	     steps{
+    }
+            steps{
                 withSonarQubeEnv('Sonar') {
                     sh "${scannerHome}/bin/sonar-scanner"
                 }
-            }  
-	    
+            }
+        }
 
         stage('build-dev') {
-	
-	when{ 
-        expression {
+         when{ 
+          expression {
             env.Environment == 'DEV' }
             }
             steps {
                 sh '''
-               cd UI
+cd UI
 docker build -t devopseasylearning2021/s4-ui:${BUILD_NUMBER}$UITag .
 cd -
 cd DB
@@ -123,13 +122,13 @@ cd -
         }
 
         stage('build-sanbox') {
-		when{ 
+          when{ 
               expression {
                 env.Environment == 'SANBOX' }
                 }
             steps {
                 sh '''
-   cd UI
+cd UI
 docker build -t devopseasylearning2021/s4-ui:${BUILD_NUMBER}$UITag .
 cd -
 cd DB
@@ -147,13 +146,13 @@ cd -
 
 
         stage('build-prod') {
-		when{ 
+          when{ 
               expression {
                 env.Environment == 'PROD' }
                 }
             steps {
                 sh '''
-               cd UI
+cd UI
 docker build -t devopseasylearning2021/s4-ui:${BUILD_NUMBER}$UITag .
 cd -
 cd DB
@@ -266,3 +265,9 @@ cd -
       deleteDir()
     }
 }
+
+
+	
+}
+
+
