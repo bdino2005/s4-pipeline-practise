@@ -65,8 +65,9 @@ options {
         stage('permission') {
             steps {
                 sh '''
-                ls 
-                pwd
+       cat permission.txt | grep -o $USER
+       echo $? 
+        
                 '''
             }
         }
@@ -81,39 +82,89 @@ options {
         }
 
         stage('sonarqube') {
-            steps {
-                sh '''
-                ls 
-                pwd
-                '''
-            }
+           docker {
+                  image 'sonarsource/sonar-scanner-cli:4.7.0'
+          }
         }
+	   environment {
+        CI = 'true'
+        //  scannerHome = tool 'Sonar'
+        scannerHome='/opt/sonar-scanner'
+    }
+	     steps{
+                withSonarQubeEnv('Sonar') {
+                    sh "${scannerHome}/bin/sonar-scanner"
+                }
+            }  
+	    
 
         stage('build-dev') {
+	
+	when{ 
+        expression {
+            env.Environment == 'DEV' }
+            }
             steps {
                 sh '''
-                ls 
-                pwd
-		uname -r
+               cd UI
+docker build -t devopseasylearning2021/s4-ui:${BUILD_NUMBER}$UITag .
+cd -
+cd DB
+docker build -t devopseasylearning2021/s4-db:${BUILD_NUMBER}$DBTag .
+cd -
+cd auth 
+docker build -t devopseasylearning2021/s4-auth:${BUILD_NUMBER}$AUTHTag .
+cd -
+cd weather 
+docker build -t devopseasylearning2021/s4-weather:${BUILD_NUMBER}$WEATHERTag .
+cd -
                 '''
             }
         }
 
         stage('build-sanbox') {
+		when{ 
+              expression {
+                env.Environment == 'SANBOX' }
+                }
             steps {
                 sh '''
-                ls 
-                pwd
+   cd UI
+docker build -t devopseasylearning2021/s4-ui:${BUILD_NUMBER}$UITag .
+cd -
+cd DB
+docker build -t devopseasylearning2021/s4-db:${BUILD_NUMBER}$DBTag .
+cd -
+cd auth 
+docker build -t devopseasylearning2021/s4-auth:${BUILD_NUMBER}$AUTHTag .
+cd -
+cd weather 
+docker build -t devopseasylearning2021/s4-weather:${BUILD_NUMBER}$WEATHERTag .
+cd -
                 '''
             }
         }
 
 
         stage('build-prod') {
+		when{ 
+              expression {
+                env.Environment == 'PROD' }
+                }
             steps {
                 sh '''
-                ls 
-                pwd
+               cd UI
+docker build -t devopseasylearning2021/s4-ui:${BUILD_NUMBER}$UITag .
+cd -
+cd DB
+docker build -t devopseasylearning2021/s4-db:${BUILD_NUMBER}$DBTag .
+cd -
+cd auth 
+docker build -t devopseasylearning2021/s4-auth:${BUILD_NUMBER}$AUTHTag .
+cd -
+cd weather 
+docker build -t devopseasylearning2021/s4-weather:${BUILD_NUMBER}$WEATHERTag .
+cd -
                 '''
             }
         }
