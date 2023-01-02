@@ -8,7 +8,7 @@ pipeline {
 	}
 
 options {
-    buildDiscarder(logRotator(numToKeepStr: '20'))
+    buildDiscarder(logRotator(numToKeepStr: '2'))
     disableConcurrentBuilds()
     timeout (time: 60, unit: 'MINUTES')
     timestamps()
@@ -282,7 +282,7 @@ EOF
 	          ]) {
 
 	            sh '''
-                 git config --global user.name "bdino20000005"
+                 git config --global user.name "bdino2005"
                  git config --global user.email bdzuno@gmail.com
                 rm -rf s4-pipeline-practise || true
                 git clone  https://bdino2005:$IMAGE@github.com/bdino2005/s4-pipeline-practise.git
